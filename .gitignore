@@ -1,0 +1,8 @@
+cowrie/logs/*
+logs/*
+*.log
+*.pyc
+__pycache__/
+.env
+venv/
+.DS_Store
