@@ -21,8 +21,6 @@ WORKDIR /home/cowrie/cowrie
 
 RUN pip install --user -r requirements.txt
 
-RUN cp etc/cowrie.cfg.dist etc/cowrie.cfg
-
 EXPOSE 2222 2223
 
 CMD ["bin/cowrie", "start", "-n"]
