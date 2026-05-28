@@ -1,0 +1,23 @@
+version: "3.8"
+
+networks:
+  honeypot-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+
+services:
+  cowrie:
+    build: ./cowrie
+    container_name: cowrie-honeypot
+    networks:
+      honeypot-net:
+        ipv4_address: 172.20.0.10
+    ports:
+      - "2222:2222"
+      - "2223:2223"
+    volumes:
+      - ./cowrie/config:/home/cowrie/cowrie/etc
+      - ./cowrie/logs:/home/cowrie/cowrie/var/log/cowrie
+    restart: unless-stopped
