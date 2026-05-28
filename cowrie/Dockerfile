@@ -11,16 +11,25 @@ RUN apt-get update && apt-get install -y \
 
 RUN useradd -m -s /bin/bash cowrie
 
-USER cowrie
-
 WORKDIR /home/cowrie
 
 RUN git clone https://github.com/cowrie/cowrie.git cowrie
 
 WORKDIR /home/cowrie/cowrie
 
-RUN pip install --user -r requirements.txt
+RUN pip install -r requirements.txt
+
+RUN pip install .
+
+RUN cp etc/cowrie.cfg.dist etc/cowrie.cfg || true
+
+RUN chown -R cowrie:cowrie /home/cowrie
+
+USER cowrie
+
+ENV PATH="/home/cowrie/.local/bin:${PATH}"
+ENV PYTHONPATH="/home/cowrie/cowrie/src"
 
 EXPOSE 2222 2223
 
-CMD ["bin/cowrie", "start", "-n"]
+CMD ["twistd", "-n", "cowrie"]
