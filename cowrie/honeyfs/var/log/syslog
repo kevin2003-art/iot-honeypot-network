@@ -1,0 +1,4 @@
+Jan 15 08:00:01 MedDevice-IoT-001 systemd[1]: Started Medical Device Monitoring Service.
+Jan 15 08:00:05 MedDevice-IoT-001 medmond[312]: Vitals monitor initialized.
+Jan 15 08:01:00 MedDevice-IoT-001 medmond[312]: Patient data collection active.
+Jan 15 08:05:00 MedDevice-IoT-001 medmond[312]: Heartbeat signal OK.

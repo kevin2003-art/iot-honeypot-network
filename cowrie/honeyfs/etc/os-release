@@ -1,0 +1,6 @@
+NAME="MedOS"
+VERSION="2.4.1"
+ID=medos
+VERSION_ID="2.4.1"
+PRETTY_NAME="MedOS 2.4.1 (IoT Edition)"
+HOME_URL="http://meddevice.local"
