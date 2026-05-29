@@ -1,0 +1,6 @@
+Device: Patient Vitals Monitor
+Model: PVM-2000X
+Firmware: v2.4.1-stable
+Serial: MED-IOT-881234
+Network: DHCP
+Status: OPERATIONAL
