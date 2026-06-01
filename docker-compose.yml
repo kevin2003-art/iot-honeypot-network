@@ -1,4 +1,4 @@
-networks:
+knetworks:
   honeypot-net:
     driver: bridge
     ipam:
@@ -19,4 +19,6 @@ services:
       - ./cowrie/config:/home/cowrie/cowrie/etc
       - ./cowrie/logs:/home/cowrie/cowrie/var/log/cowrie
       - ./cowrie/honeyfs:/home/cowrie/cowrie/honeyfs
+      - ./cowrie/downloads:/home/cowrie/cowrie/var/lib/cowrie/downloads
+      - ./cowrie/tty:/home/cowrie/cowrie/var/lib/cowrie/tty
     restart: unless-stopped
