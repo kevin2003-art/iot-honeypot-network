@@ -1,4 +1,4 @@
-knetworks:
+networks:
   honeypot-net:
     driver: bridge
     ipam:
