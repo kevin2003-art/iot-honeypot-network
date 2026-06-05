@@ -1,0 +1,31 @@
+============================================================
+   THREAT INTELLIGENCE REPORT
+   Generated: 2026-06-05T08:05:52.420424Z
+============================================================
+
+[1] ATTACK OVERVIEW
+    Total events logged : 132
+    Unique attacker IPs : 1
+    Failed logins       : 8
+    Successful logins   : 8
+    Commands executed   : 24
+
+[2] TOP ATTACKER IPs
+    172.20.0.1 — 132 events
+
+[3] MOST USED PASSWORDS
+    admin — tried 8 times
+
+[4] MOST USED USERNAMES
+    root — tried 16 times
+
+[5] COMMANDS EXECUTED BY ATTACKERS
+    $ exit — 8 times
+    $ cat /opt/meddevice/device_info.txt — 5 times
+    $ ls /opt — 5 times
+    $ cat /etc/hostname — 3 times
+    $ ls / — 1 times
+    $ cat /etc/passwd — 1 times
+    $ whoami — 1 times
+
+============================================================
