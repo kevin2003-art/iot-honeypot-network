@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attack Charts — IoT Honeypot</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', sans-serif; background: #0a0e1a; color: #e0e6f0; }
+header { background: #111827; padding: 20px 40px; border-bottom: 2px solid #1e3a5f; }
+header h1 { color: #38bdf8; font-size: 24px; }
+header p { color: #64748b; font-size: 13px; margin-top: 4px; }
+nav { padding: 12px 40px; background: #111827; border-bottom: 1px solid #1e293b; }
+nav a { color: #64748b; text-decoration: none; margin-right: 20px; font-size: 13px; }
+nav a:hover { color: #38bdf8; }
+.section { padding: 30px 40px; }
+.section h2 { color: #38bdf8; font-size: 16px; margin-bottom: 20px; border-left: 3px solid #38bdf8; padding-left: 12px; }
+.chart-box { background: #111827; border: 1px solid #1e3a5f; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+.bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 200px; }
+.bar-col { display: flex; flex-direction: column; align-items: center; flex: 1; height: 100%; justify-content: flex-end; }
+.bar-block { background: #38bdf8; width: 100%; border-radius: 4px 4px 0 0; transition: height 0.5s; min-height: 2px; }
+.bar-xlabel { color: #475569; font-size: 10px; margin-top: 6px; text-align: center; }
+.bar-val { color: #94a3b8; font-size: 10px; margin-bottom: 4px; }
+.donut-wrap { display: flex; align-items: center; gap: 40px; }
+.legend { display: flex; flex-direction: column; gap: 12px; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding: 0 40px 30px; }
+footer { text-align: center; padding: 20px; color: #334155; font-size: 12px; border-top: 1px solid #1e3a5f; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Attack Charts — IoT Honeypot</h1>
+  <p>Visual breakdown of attacker behaviour and timing</p>
+</header>
+
+<nav>
+  <a href="index.html">Dashboard</a>
+  <a href="charts.html" style="color:#38bdf8">Charts</a>
+</nav>
+
+<div class="section">
+  <h2>Attacks by Hour of Day</h2>
+  <div class="chart-box">
+    <div class="bar-chart" id="hourly-chart"></div>
+  </div>
+</div>
+
+<div class="two-col">
+  <div>
+    <div class="section" style="padding: 0 0 24px;">
+      <h2>Login Results</h2>
+      <div class="chart-box">
+        <div class="donut-wrap">
+          <canvas id="login-canvas" width="160" height="160"></canvas>
+          <div class="legend" id="login-legend"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="section" style="padding: 0 0 24px;">
+      <h2>Event Type Breakdown</h2>
+      <div class="chart-box" id="event-types"></div>
+    </div>
+  </div>
+</div>
+
+<footer>IoT Honeypot Network — Healthcare Deception Security Project</footer>
+
+<script>
+function drawDonut(canvasId, data, colors) {
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext('2d');
+  const total = data.reduce((s, d) => s + d.value, 0);
+  if (total === 0) return;
+  let start = -Math.PI / 2;
+  const cx = 80, cy = 80, r = 60, inner = 35;
+  data.forEach((d, i) => {
+    const slice = (d.value / total) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, start, start + slice);
+    ctx.closePath();
+    ctx.fillStyle = colors[i];
+    ctx.fill();
+    start += slice;
+  });
+  ctx.beginPath();
+  ctx.arc(cx, cy, inner, 0, Math.PI * 2);
+  ctx.fillStyle = '#111827';
+  ctx.fill();
+  ctx.fillStyle = '#e0e6f0';
+  ctx.font = 'bold 18px Segoe UI';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(total, cx, cy);
+}
+
+function loadCharts() {
+  fetch('chart_data.json')
+    .then(r => r.json())
+    .then(data => {
+      const hourly = data.hourly_attacks || [];
+      const container = document.getElementById('hourly-chart');
+      if (hourly.length > 0) {
+        const max = Math.max(...hourly.map(h => h.count));
+        container.innerHTML = hourly.map(h => `
+          <div class="bar-col">
+            <div class="bar-val">${h.count}</div>
+            <div class="bar-block" style="height:${(h.count/max*160)}px"></div>
+            <div class="bar-xlabel">${h.hour}</div>
+          </div>
+        `).join('');
+      } else {
+        container.innerHTML = '<p style="color:#475569;font-size:13px">No data yet</p>';
+      }
+
+      const lr = data.login_results || {success: 0, failed: 0};
+      const loginData = [
+        {label: 'Success', value: lr.success},
+        {label: 'Failed', value: lr.failed}
+      ];
+      const colors = ['#34d399', '#f87171'];
+      drawDonut('login-canvas', loginData, colors);
+      const legend = document.getElementById('login-legend');
+      legend.innerHTML = loginData.map((d, i) => `
+        <div class="legend-item">
+          <div class="legend-dot" style="background:${colors[i]}"></div>
+          <span>${d.label}: ${d.value}</span>
+        </div>
+      `).join('');
+
+      const types = data.event_type_breakdown || [];
+      const etContainer = document.getElementById('event-types');
+      if (types.length > 0) {
+        const max = types[0].count;
+        etContainer.innerHTML = types.slice(0, 6).map(t => `
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+            <div style="width:180px;font-size:12px;color:#94a3b8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.type}</div>
+            <div style="flex:1;background:#1e293b;border-radius:4px;height:18px">
+              <div style="background:#818cf8;height:18px;border-radius:4px;width:${(t.count/max*100)}%"></div>
+            </div>
+            <div style="width:36px;text-align:right;font-size:12px;color:#64748b">${t.count}</div>
+          </div>
+        `).join('');
+      } else {
+        etContainer.innerHTML = '<p style="color:#475569;font-size:13px">No data yet</p>';
+      }
+    })
+    .catch(() => console.log('No chart data yet'));
+}
+
+loadCharts();
+setInterval(loadCharts, 30000);
+</script>
+</body>
+</html>
