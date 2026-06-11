@@ -1,0 +1,69 @@
+{
+    "generated_at": "2026-06-11T07:35:13.428170Z",
+    "total_events": 132,
+    "total_sessions": 11,
+    "total_login_attempts": 16,
+    "total_login_success": 8,
+    "total_commands": 24,
+    "unique_ips": [
+        "172.20.0.1"
+    ],
+    "top_passwords": [
+        {
+            "password": "admin",
+            "count": 8
+        }
+    ],
+    "top_usernames": [
+        {
+            "username": "root",
+            "count": 16
+        }
+    ],
+    "top_commands": [
+        {
+            "command": "exit",
+            "count": 8
+        },
+        {
+            "command": "cat /opt/meddevice/device_info.txt",
+            "count": 5
+        },
+        {
+            "command": "ls /opt",
+            "count": 5
+        },
+        {
+            "command": "cat /etc/hostname",
+            "count": 3
+        },
+        {
+            "command": "ls /",
+            "count": 1
+        },
+        {
+            "command": "cat /etc/passwd",
+            "count": 1
+        },
+        {
+            "command": "whoami",
+            "count": 1
+        }
+    ],
+    "events_over_time": [
+        {
+            "time": "2026-06-05T07",
+            "count": 108
+        },
+        {
+            "time": "2026-06-05T08",
+            "count": 24
+        }
+    ],
+    "ip_event_counts": [
+        {
+            "ip": "172.20.0.1",
+            "count": 132
+        }
+    ]
+}
