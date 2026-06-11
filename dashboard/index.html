@@ -195,6 +195,7 @@ footer {
   <button class="tab" onclick="showTab('commands')">COMMANDS</button>
   <button class="tab" onclick="showTab('charts')">CHARTS</button>
   <button class="tab" onclick="showTab('livefeed')">LIVE FEED</button>
+  <button class="tab" onclick="showTab('worldmap')">WORLD MAP</button>
 </nav>
 
 <!-- OVERVIEW -->
@@ -295,6 +296,43 @@ footer {
     <div class="panel-body">
       <div class="log-feed" id="live-feed">
         <div class="log-line conn">[ SYSTEM ] Waiting for attacker connections on port 2222 and 2223...</div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- WORLD MAP -->
+<div class="page" id="page-worldmap">
+  <div class="panel">
+    <div class="panel-header">ATTACK ORIGIN WORLD MAP <span class="badge">GEOINT</span></div>
+    <div class="panel-body">
+      <div id="map-container" style="background:#050a05;border:1px solid #1a3a1a;border-radius:4px;padding:20px;min-height:400px;">
+        <div id="map-placeholder" style="color:#2a4a2a;font-size:11px;letter-spacing:2px;text-align:center;padding:60px 0;">
+          LOADING GEOLOCATION DATA...
+        </div>
+        <div id="world-map-wrap" style="display:none">
+          <div style="margin-bottom:16px;font-size:11px;color:#4a7c59;letter-spacing:2px;">
+            ATTACK ORIGINS DETECTED — THREAT INTELLIGENCE GEOLOCATION
+          </div>
+          <div id="geo-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>IP ADDRESS</th>
+                  <th>COUNTRY</th>
+                  <th>CITY</th>
+                  <th>ISP</th>
+                  <th>COORDINATES</th>
+                  <th>THREAT</th>
+                </tr>
+              </thead>
+              <tbody id="geo-table"></tbody>
+            </table>
+          </div>
+          <div style="margin-top:24px;font-size:11px;color:#4a7c59;letter-spacing:2px;margin-bottom:12px;">
+            GEOGRAPHIC DISTRIBUTION
+          </div>
+          <div id="country-bars"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -495,10 +533,63 @@ function refreshAll() {
   loadDashboard();
   loadCharts();
   loadLiveFeed();
-}
+  loadGeoMap();
 
+}
+function loadGeoMap() {
+  fetch('geo_enriched.json')
+    .then(r => r.json())
+    .then(data => {
+      const keys = Object.keys(data);
+      if (keys.length === 0) {
+        document.getElementById('map-placeholder').textContent = 'NO GEOLOCATION DATA YET — RUN geolocate_ips.py FIRST';
+        return;
+      }
+
+      document.getElementById('map-placeholder').style.display = 'none';
+      document.getElementById('world-map-wrap').style.display = 'block';
+
+      const tbody = document.getElementById('geo-table');
+      tbody.innerHTML = keys.map(ip => {
+        const g = data[ip];
+        return `
+          <tr>
+            <td>${ip}</td>
+            <td>${g.country || 'Unknown'}</td>
+            <td>${g.city || 'Unknown'}</td>
+            <td>${g.isp || 'Unknown'}</td>
+            <td>${g.lat || 0}, ${g.lon || 0}</td>
+            <td><span class="threat-level threat-high">TRACKED</span></td>
+          </tr>
+        `;
+      }).join('');
+
+      const countryCounts = {};
+      keys.forEach(ip => {
+        const country = data[ip].country || 'Unknown';
+        countryCounts[country] = (countryCounts[country] || 0) + 1;
+      });
+
+      const sorted = Object.entries(countryCounts).sort((a, b) => b[1] - a[1]);
+      const max = sorted[0][1];
+      const countryBars = document.getElementById('country-bars');
+      countryBars.innerHTML = sorted.map(([country, count]) => `
+        <div class="bar-row">
+          <div class="bar-label">${country}</div>
+          <div class="bar-wrap">
+            <div class="bar-fill" style="width:${(count/max*100)}%;background:#ff4444;box-shadow:0 0 6px #ff4444"></div>
+          </div>
+          <div class="bar-count">${count}</div>
+        </div>
+      `).join('');
+    })
+    .catch(() => {
+      document.getElementById('map-placeholder').textContent = 'NO GEOLOCATION DATA YET — RUN geolocate_ips.py FIRST';
+    });
+}
 refreshAll();
 setInterval(refreshAll, 30000);
+
 </script>
 </body>
 </html>
