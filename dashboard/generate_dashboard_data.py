@@ -117,6 +117,11 @@ def generate(events):
     print(f"[*] Total sessions: {data['total_sessions']}")
     print(f"[*] Unique IPs: {len(data['unique_ips'])}")
 
+import shutil
+
 if __name__ == "__main__":
     events = load_events(LOG_FILE)
     generate(events)
+    if os.path.exists("cowrie/logs/geo_enriched.json"):
+        shutil.copy("cowrie/logs/geo_enriched.json", "dashboard/geo_enriched.json")
+        print("[+] Geo data copied to dashboard folder")
