@@ -1,0 +1,66 @@
+{
+    "hourly_attacks": [
+        {
+            "hour": "07:00",
+            "count": 108
+        },
+        {
+            "hour": "08:00",
+            "count": 24
+        }
+    ],
+    "event_type_breakdown": [
+        {
+            "type": "command.input",
+            "count": 24
+        },
+        {
+            "type": "client.var",
+            "count": 16
+        },
+        {
+            "type": "session.connect",
+            "count": 11
+        },
+        {
+            "type": "client.version",
+            "count": 11
+        },
+        {
+            "type": "client.kex",
+            "count": 11
+        },
+        {
+            "type": "session.closed",
+            "count": 11
+        },
+        {
+            "type": "client.fingerprint",
+            "count": 8
+        },
+        {
+            "type": "login.failed",
+            "count": 8
+        },
+        {
+            "type": "login.success",
+            "count": 8
+        },
+        {
+            "type": "client.size",
+            "count": 8
+        },
+        {
+            "type": "session.params",
+            "count": 8
+        },
+        {
+            "type": "log.closed",
+            "count": 8
+        }
+    ],
+    "login_results": {
+        "success": 8,
+        "failed": 8
+    }
+}
